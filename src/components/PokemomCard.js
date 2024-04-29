@@ -1,21 +1,29 @@
 import React from "react";
 import {StyleSheet,View,Text,Image,Button, Pressable} from "react-native"
+import getColorByPokemonType from "../utils/getColorByPokeminType";
+import { useNavigation } from "@react-navigation/native"
+import { capitalize } from "lodash"
 
 export default function PokemonCard(props){
   
     const {pokemon} = props
+    const navigation = useNavigation()
+
+    const pokemonColor = getColorByPokemonType(pokemon.type)
+    const bgStyles = { backgroundColor: pokemonColor,...styles.bgStyles}
 
     const goToPokemon = () => {
-      console.log("hellow "+pokemon.name)
+      console.log("hellow "+pokemon.name+" ")
+      navigation.navigate("Pokemon", {id:pokemon.id})
     }
 
     return(
       <Pressable style={styles.backgroundCard} onPress={() => goToPokemon()}>
         <View style={styles.card}>
           <View style={styles.spacing}>
-            <View style={styles.bgStyles}>
+            <View style={bgStyles}>
               <Text style={styles.order}> #{`${pokemon.order}`.padStart(3,0)}</Text>
-              <Text style={styles.name}>{pokemon.name}</Text>
+              <Text style={styles.name}>{capitalize(pokemon.name)}</Text>
               <Image style={styles.image} source={{uri:pokemon.image}}></Image>
             </View>
           </View>
@@ -34,7 +42,9 @@ const styles = StyleSheet.create({
       padding:5
     },
     bgStyles:{
-      backgroundColor:"grey"
+      flex:1,
+      borderRadius:15,
+      padding:10
     },
     order:{
       position:"absolute",

@@ -3,19 +3,23 @@ import {SafeAreaView,Text} from "react-native"
 import { getPokemonsApi,getPokemonsDetailApi } from "../api/pokemonApi";
 import PokemonList from '../components/PokemonList'
 
-export default function Pokemon(){
+export default function Pokedex(){
     const [pokemons,setPokemons] = useState([]);
+    const [nextUrl , setNextUrl]  = useState(null);
+    const [isLoading , setIsLoading]  = useState(false);
 
     // Para gatillar la fase de Mountingmcon useEffect, debemos simplemente entregar como segundo parámetro a useEffectun arreglo de dependencias vacío [].
     useEffect ( () => {
         (async () => {
-            await loadPokemon();
+            await loadPokemons();
         })();
     }, [] );
 
-    const loadPokemon =  async() => {
+    const loadPokemons = async() => {
         try{
-            const response  = await getPokemonsApi()
+            const response  = await getPokemonsApi(nextUrl)
+            setIsLoading(true)
+            setNextUrl(response.next)
             let pokemonArray = []
 
             for await (let pokemon of response.results){
@@ -31,6 +35,7 @@ export default function Pokemon(){
             }
 
             setPokemons([...pokemons,...pokemonArray])
+            setIsLoading(false)
 
         }catch(error){
             console.log(error)
@@ -39,7 +44,7 @@ export default function Pokemon(){
 
     return (
         <SafeAreaView>
-            <PokemonList pokemons={pokemons}></PokemonList>
+            <PokemonList pokemons={pokemons} loadPokemons={loadPokemons} isNext={nextUrl} isLoading={isLoading}></PokemonList>
         </SafeAreaView>
     )
 }
