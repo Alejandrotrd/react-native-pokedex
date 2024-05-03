@@ -3,7 +3,10 @@ import { SafeAreaView, Text, Button } from 'react-native'
 import { getPokemonDetailApi } from '../api/pokemonApi'
 import Header from '../components/pokemon/Header'
 import Type from '../components/pokemon/Type';
+import Stats from '../components/pokemon/Stats';
 import { ScrollView } from 'react-native-gesture-handler';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import { head } from 'lodash';
 
 export default function PokemonScreen(props) {
     const { navigation, route: { params } } = props
@@ -11,6 +14,13 @@ export default function PokemonScreen(props) {
 
     const [pokemon, setPokemon] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
+
+    useEffect(() => {
+        navigation.setOptions({
+            headerRight: () => null,
+            headerLeft: () => <Icon name='arrow-left' color="#fff" size={20} style={{marginLeft:20}} onPress={()=>navigation.goBack()}></Icon>
+        })
+    }, [navigation]); //cada que params se actualice se volvera a ejecutar el useeffect
 
     useEffect(() => {
         (async () => {
@@ -46,6 +56,10 @@ export default function PokemonScreen(props) {
                 types={pokemon.types}
             >    
             </Type>
+            <Stats
+                stats={pokemon.stats}
+            >
+            </Stats>
         </ScrollView>
     )
 }
